@@ -2,7 +2,7 @@ class Mold{
     constructor(){
         this.x = random(width);
         this.y = random(height);
-        this.r = 0.5;
+        this.r = d*0.5;
 
         this.heading = random(360);
 
@@ -10,13 +10,13 @@ class Mold{
         this.vx = cos(this.heading);
         this.vy = sin(this.heading);
 
-        this.rotAngle = 35; //play with this for different searching rotations
+        this.rotAngle = 45; //play with this for different searching rotations
 
         this.lSensorPos = createVector(0,0);
         this.cSensorPos = createVector(0,0);
         this.rSensorPos = createVector(0,0);
-        this.sensorAngle = floor(random(35,75));
-        this.sensorDist =floor(random(10,100));
+        this.sensorAngle = floor(random(25,90));
+        this.sensorDist =floor(random(30,150));
 
     }
 

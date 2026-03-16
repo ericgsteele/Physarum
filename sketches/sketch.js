@@ -5,6 +5,7 @@ let molds = [];
 let num = 4000;
 let m;
 let d;
+let pg; // <-- graphics buffer for text overlay
 
 function setup() {
 
@@ -12,6 +13,9 @@ function setup() {
   background(0);
   angleMode(DEGREES);
   d = pixelDensity();
+
+  pg = createGraphics(windowWidth,windowHeight);
+  pg.angleMode(DEGREES);
   
   for (let i=0; i<num; i++){
     molds[i] = new Mold();
@@ -25,20 +29,21 @@ function draw() {
     background(0,5);
 
 
-//TO DO: Figure out how to get this into a graphics buffer so the molds dont read it:
-    // fill(255,205,240,200);
-    // textSize(24);
-    // textAlign(LEFT);
-    // stroke(0);
-    // strokeWeight(3);
-    // textStyle(ITALIC);
-    // text("Aren't they precious?", 50, 50);
+    pg.clear();//clear each frame so molds dont read em
+    pg.fill(255,205,240,200);
+    pg.textSize(24);
+    pg.textAlign(LEFT);
+    pg.stroke(0);
+    pg.strokeWeight(3);
+    pg.textStyle(ITALIC);
+    pg.text("Aren't they precious?", 50, 50);
 
-    // textSize(14);
-    // textAlign(RIGHT);
-    // textStyle(NORMAL);
-    // text("Sensor angle: "+ molds[0].sensorAngle, width-50, height-50);
-    // text("Sensor distance: "+ molds[0].sensorDist, width-50, height-30);
+    pg.textSize(14);
+    pg.textAlign(RIGHT);
+    pg.textStyle(NORMAL);
+    pg.text("Sensor angle: "+ molds[0].sensorAngle, width-50, height-50);
+    pg.text("Sensor distance: "+ molds[0].sensorDist, width-50, height-30);
+    pg.text("Moldling size: "+ molds[0].r, width-50, height-10);
 
 
     loadPixels();
@@ -48,10 +53,14 @@ function draw() {
       molds[i].update();
       molds[i].display();
     }
+
+    image(pg,0,0); //composite the text image buffer on top
+
 }
 
 
 
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
+  pg.resizeCanvas(windowWidth, windowHeight);
 }
