@@ -18,46 +18,76 @@ class Mold{
         this.sensorAngle = floor(random(25,90));
         this.sensorDist =floor(random(30,150));
 
+        this.startled = false;
+        this.startleTimer = 0;
+        this.startleDuration = floor(random(10, 40));// tweak for organic feel
+        this.startleSpeed = 1;
+
     }
+
+    startle() {
+        let d = dist(this.x, this.y, mouseX, mouseY);
+        let maxDist = sqrt(width * width + height * height)/3; // max possible distance on canvas
+        let proximity = 1 - (d / maxDist); // 1 = right at cursor, 0 = far away
+      
+        this.startled = true;
+        this.heading = random(360);
+      
+        // Closer molds panic longer - tweak the min/max 
+        this.startleTimer = floor(lerp(0.5, 50, proximity));
+      
+        // Closer molds move faster — store a temporary speed multiplier - tweak the min/max
+        this.startleSpeed = lerp(1, 1.5, proximity);
+      }
 
     update(){
 
         this.vx = cos(this.heading);
         this.vy = sin(this.heading);
+      
+        // Use startleSpeed when startled, normal speed otherwise
+        let speed = this.startled ? this.startleSpeed : 1;
+        this.x = (this.x + this.vx * speed + width) % width;
+        this.y = (this.y + this.vy * speed + height) % height;
+      
+        if (this.startled) {
+          this.startleTimer--;
+          if (this.startleTimer <= 0) {
+            this.startled = false;
+            this.startleSpeed = 1; // reset speed when recovering
+          }
+        } else {
+            //normal behaviour
+            this.getSensorPos(this.rSensorPos, this.heading + this.sensorAngle);  //right sensor position (+x, +y)
+            this.getSensorPos(this.lSensorPos, this.heading - this.sensorAngle);  //left sensor position (-x, -y)
+            this.getSensorPos(this.cSensorPos, this.heading);  //center sensor position (+0, +0)
+            
+            let index, lPx, rPx, cPx; 
+            
+            //getting pixel info from sensor positions and storing in variables lPx, rPx, cPx
+            index = 4*(d*floor(this.rSensorPos.y)) * (d*width) + 4*(d*floor(this.rSensorPos.x));
+            rPx = pixels[index];
 
-        this.x = (this.x + this.vx + width) % width;
-        this.y = (this.y + this.vy + height) % height;
+            index = 4*(d*floor(this.lSensorPos.y)) * (d*width) + 4*(d*floor(this.lSensorPos.x));
+            lPx = pixels[index];
 
-        this.getSensorPos(this.rSensorPos, this.heading + this.sensorAngle);  //right sensor position (+x, +y)
-        this.getSensorPos(this.lSensorPos, this.heading - this.sensorAngle);  //left sensor position (-x, -y)
-        this.getSensorPos(this.cSensorPos, this.heading);  //center sensor position (+0, +0)
-        
-        let index, lPx, rPx, cPx; 
-        
-        //getting pixel info from sensor positions and storing in variables lPx, rPx, cPx
-        index = 4*(d*floor(this.rSensorPos.y)) * (d*width) + 4*(d*floor(this.rSensorPos.x));
-        rPx = pixels[index];
+            index = 4*(d*floor(this.cSensorPos.y)) * (d*width) + 4*(d*floor(this.cSensorPos.x));
+            cPx = pixels[index];
 
-        index = 4*(d*floor(this.lSensorPos.y)) * (d*width) + 4*(d*floor(this.lSensorPos.x));
-        lPx = pixels[index];
-
-        index = 4*(d*floor(this.cSensorPos.y)) * (d*width) + 4*(d*floor(this.cSensorPos.x));
-        cPx = pixels[index];
-
-        if (cPx > lPx && cPx > rPx){
-            this.heading += 0;
-        } else if (cPx < lPx && cPx < rPx){
-            if(random(1) < 0.5){
-                this.heading += this.rotAngle;
-            } else {
+            if (cPx > lPx && cPx > rPx){
+                this.heading += 0;
+            } else if (cPx < lPx && cPx < rPx){
+                if(random(1) < 0.5){
+                    this.heading += this.rotAngle;
+                } else {
+                    this.heading += -this.rotAngle;
+                }
+            } else if(lPx > rPx){
                 this.heading += -this.rotAngle;
-            }
-        } else if(lPx > rPx){
-            this.heading += -this.rotAngle;
-        } else if(rPx > lPx){
-            this.heading += this.rotAngle;
-        } 
-
+            } else if(rPx > lPx){
+                this.heading += this.rotAngle;
+            } 
+        }
     }
 
     display(){

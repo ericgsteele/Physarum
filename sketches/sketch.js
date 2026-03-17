@@ -61,6 +61,17 @@ function draw() {
 
 }
 
+function mousePressed() {
+  for (let i = 0; i < num; i++) {
+    molds[i].startle();
+  }
+}
+
+function mouseDragged() {
+  for (let i = 0; i < num; i++) {
+    molds[i].startle();
+  }
+}
 
 
 function windowResized() {
