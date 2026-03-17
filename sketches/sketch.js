@@ -31,19 +31,22 @@ function draw() {
 
     pg.clear();//clear each frame so molds dont read em
     pg.fill(255,205,240,200);
-    pg.textSize(24);
-    pg.textAlign(LEFT);
+    pg.strokeWeight(3*d);
     pg.stroke(0);
-    pg.strokeWeight(3);
-    pg.textStyle(ITALIC);
-    pg.text("Aren't they precious?", 50, 50);
+    strokeCap(ROUND);
 
-    pg.textSize(14);
-    pg.textAlign(RIGHT);
+    pg.textSize(10*d);
+    
     pg.textStyle(NORMAL);
-    pg.text("Sensor angle: "+ molds[0].sensorAngle, width-50, height-50);
-    pg.text("Sensor distance: "+ molds[0].sensorDist, width-50, height-30);
-    pg.text("Moldling size: "+ molds[0].r, width-50, height-10);
+
+    pg.textAlign(LEFT);
+    pg.text("Sensor angle: "+ molds[0].sensorAngle, 50, height-10*d);
+    
+    pg.textAlign(CENTER);
+    pg.text("Sensor distance: "+ molds[0].sensorDist, width/2, height-10*d);
+    
+    pg.textAlign(RIGHT);
+    pg.text("Moldling size: "+ molds[0].r, width-50, height-10*d);
 
 
     loadPixels();
