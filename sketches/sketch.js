@@ -13,13 +13,14 @@ let startleFalloff = 5; // tweak this as see fit
 function setup() {
   d = pixelDensity();
   displayScale = max(d, 2);
-  createCanvas(windowWidth,windowHeight);
+  createCanvas(windowWidth, windowHeight);
   background(0);
   angleMode(DEGREES);
 
-  num = floor((width * height) / 300); // number of moldlings based on screen size - tweak divisor as needed
-  
-  for (let i=0; i<num; i++){
+  let isMobile = /Mobi|Android/i.test(navigator.userAgent);
+  num = isMobile ? 1000 : 2500; // number of moldlings - first value for mobile, second value for desktop
+
+  for (let i = 0; i < num; i++) {
     molds[i] = new Mold();
   }
 }
