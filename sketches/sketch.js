@@ -6,7 +6,7 @@ let fadeIn = 0;        // current opacity, starts at 0
 let fadeInSpeed = 2; // tweak — smaller is a slower fade in
 
 let molds = [];
-let num = 2500; //number of moldlings
+let num; 
 
 let startleFalloff = 5; // tweak this as see fit
 
@@ -16,6 +16,8 @@ function setup() {
   createCanvas(windowWidth,windowHeight);
   background(0);
   angleMode(DEGREES);
+
+  num = floor((width * height) / 300); // number of moldlings based on screen size - tweak divisor as needed
   
   for (let i=0; i<num; i++){
     molds[i] = new Mold();
@@ -41,6 +43,9 @@ function draw() {
     textSize(10*displayScale);
     
     textStyle(NORMAL);
+
+    textAlign(LEFT);
+    text("Moldlings: "+ num, 50, height-45*displayScale);
 
     textAlign(LEFT);
     text("Sensor angle: "+ molds[0].sensorAngle, 50, height-15*displayScale);
