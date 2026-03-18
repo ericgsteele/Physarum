@@ -15,30 +15,46 @@ class Mold{
         this.lSensorPos = createVector(0,0);
         this.cSensorPos = createVector(0,0);
         this.rSensorPos = createVector(0,0);
-        this.sensorAngle = floor(random(25,90));
-        this.sensorDist =floor(random(30,150));
+        this.sensorAngle = floor(random(25,50)); //tweak for more variety
+        this.sensorDist =floor(random(10,50)); //tweak for more variety
 
         this.startled = false;
         this.startleTimer = 0;
-        this.startleDuration = floor(random(10, 40));// tweak for organic feel
         this.startleSpeed = 1;
+
+        this.colNorm = color(190, 255, 245, 255);
+        this.colScared = color(255, 140, 190, 255);
+        this.fadeSpeed = 0.04; // tweak — smaller is a slower fade
+        this.fadeAmount = 0;
 
     }
 
     startle() {
-        let d = dist(this.x, this.y, mouseX, mouseY);
-        let maxDist = sqrt(width * width + height * height)/3; // max possible distance on canvas
-        let proximity = 1 - (d / maxDist); // 1 = right at cursor, 0 = far away
-      
+        // Wrapped distance
+        let dx = abs(this.x - mouseX);
+        dx = min(dx, width - dx);
+        let dy = abs(this.y - mouseY);
+        dy = min(dy, height - dy);
+        let dst = sqrt(dx*dx + dy*dy);
+    
+        let maxDist = sqrt(width * width + height * height) / 5;
+        let proximity = 1 - (dst / maxDist);
+        proximity = constrain(proximity, 0, 1);
+        proximity = pow(proximity, startleFalloff);
+    
+        if (proximity < 0.01) return;
+    
+        // Wrapped flee direction
+        let fleeX = this.x - mouseX;
+        let fleeY = this.y - mouseY;
+        if (abs(fleeX) > width / 2)  fleeX -= Math.sign(fleeX) * width;
+        if (abs(fleeY) > height / 2) fleeY -= Math.sign(fleeY) * height;
+        this.heading = atan2(fleeY, fleeX);
+    
         this.startled = true;
-        this.heading = random(360);
-      
-        // Closer molds panic longer - tweak the min/max 
-        this.startleTimer = floor(lerp(0.5, 50, proximity));
-      
-        // Closer molds move faster — store a temporary speed multiplier - tweak the min/max
-        this.startleSpeed = lerp(1, 1.5, proximity);
-      }
+        this.startleTimer = floor(lerp(5, 50, proximity) * random(0.5, 1.5));
+        this.startleSpeed = lerp(1, 2, proximity);
+    }
 
     update(){
 
@@ -51,7 +67,8 @@ class Mold{
         this.y = (this.y + this.vy * speed + height) % height;
       
         if (this.startled) {
-          this.startleTimer--;
+            this.heading += random(-25, 25); // tweak this range for more/less wiggle when fleeing
+            this.startleTimer--;
           if (this.startleTimer <= 0) {
             this.startled = false;
             this.startleSpeed = 1; // reset speed when recovering
@@ -90,23 +107,20 @@ class Mold{
         }
     }
 
-    display(){
-        
-        noStroke();
-        fill(190,255,245,255);
-        circle(this.x, this.y, this.r*2)
-        
-        // //temp heading display
-        // line(this.x, this.y, this.x + this.r * 3 * this.vx, this.y + this.r * 3 * this.vy);
-        
-        // //temp sensor display
-        // fill(255,0,0);
-        // rect(this.rSensorPos.x, this.rSensorPos.y, this.r, this.r);
-        // rect(this.cSensorPos.x, this.cSensorPos.y, this.r, this.r);
-        // rect(this.lSensorPos.x, this.lSensorPos.y, this.r, this.r);
-
-
+    display() {
+        // Fade toward scared or normal depending on state
+        if (this.startled) {
+            this.fadeAmount += this.fadeSpeed;
+        } else {
+            this.fadeAmount -= this.fadeSpeed;
+        }
+        this.fadeAmount = constrain(this.fadeAmount, 0, 1); // never go outside 0–1
     
+        let currentColor = lerpColor(this.colNorm, this.colScared, this.fadeAmount);
+    
+        noStroke();
+        fill(currentColor);
+        circle(this.x, this.y, this.r * 2); //r*2 is normal, larger = testing
     }
 
     getSensorPos(sensor, angle){

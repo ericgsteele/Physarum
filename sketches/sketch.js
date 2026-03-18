@@ -6,6 +6,7 @@ let num = 4000;
 let m;
 let d;
 let pg; // <-- graphics buffer for text overlay
+let startleFalloff = 5; // tweak this
 
 function setup() {
 
