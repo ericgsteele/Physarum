@@ -16,7 +16,7 @@ class Mold{
         this.cSensorPos = createVector(0,0);
         this.rSensorPos = createVector(0,0);
         this.sensorAngle = floor(random(25,90)); //tweak for more variety
-        this.sensorDist =floor(random(30,120)); //tweak for more variety
+        this.sensorDist = floor(random(0.03, 0.08) * min(width, height)); //tweak for more variety
 
         this.startled = false;
         this.startleTimer = 0;
