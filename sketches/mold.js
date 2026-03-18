@@ -2,7 +2,7 @@ class Mold{
     constructor(){
         this.x = random(width);
         this.y = random(height);
-        this.r = d*0.5;
+        this.r = 1; //moldling size
 
         this.heading = random(360);
 
@@ -22,6 +22,7 @@ class Mold{
         this.startleTimer = 0;
         this.startleSpeed = 1;
 
+        this.currentColor = color(190, 255, 245, 255); // starts as normal color
         this.colNorm = color(190, 255, 245, 255);
         this.colScared = color(255, 140, 190, 255);
         this.fadeSpeed = 0.04; // tweak — smaller is a slower fade
@@ -82,13 +83,13 @@ class Mold{
             let index, lPx, rPx, cPx; 
             
             //getting pixel info from sensor positions and storing in variables lPx, rPx, cPx
-            index = 4*(d*floor(this.rSensorPos.y)) * (d*width) + 4*(d*floor(this.rSensorPos.x));
+            index = 4*floor(this.rSensorPos.y) * width + 4*floor(this.rSensorPos.x);
             rPx = pixels[index];
 
-            index = 4*(d*floor(this.lSensorPos.y)) * (d*width) + 4*(d*floor(this.lSensorPos.x));
+            index = 4*floor(this.lSensorPos.y) * width + 4*floor(this.lSensorPos.x);
             lPx = pixels[index];
 
-            index = 4*(d*floor(this.cSensorPos.y)) * (d*width) + 4*(d*floor(this.cSensorPos.x));
+            index = 4*floor(this.cSensorPos.y) * width + 4*floor(this.cSensorPos.x);
             cPx = pixels[index];
 
             if (cPx > lPx && cPx > rPx){
@@ -108,19 +109,24 @@ class Mold{
     }
 
     display() {
-        // Fade toward scared or normal depending on state
+        let moving = false;
+    
         if (this.startled) {
             this.fadeAmount += this.fadeSpeed;
-        } else {
+            moving = true;
+        } else if (this.fadeAmount > 0) {  // only fade back if not already at 0
             this.fadeAmount -= this.fadeSpeed;
+            moving = true;
         }
-        this.fadeAmount = constrain(this.fadeAmount, 0, 1); // never go outside 0–1
     
-        let currentColor = lerpColor(this.colNorm, this.colScared, this.fadeAmount);
+        if (moving) {
+            this.fadeAmount = constrain(this.fadeAmount, 0, 1);
+            this.currentColor = lerpColor(this.colNorm, this.colScared, this.fadeAmount);
+        }
     
         noStroke();
-        fill(currentColor);
-        circle(this.x, this.y, this.r * 2); //r*2 is normal, larger = testing
+        fill(this.currentColor);
+        circle(this.x, this.y, this.r);
     }
 
     getSensorPos(sensor, angle){

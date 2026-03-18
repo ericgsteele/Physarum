@@ -2,63 +2,45 @@
 
 
 let molds = [];
-let num = 4000;
-let m;
-let d;
-let pg; // <-- graphics buffer for text overlay
-let startleFalloff = 5; // tweak this
+let num = 3500; //number of moldlings
+
+let startleFalloff = 5; // tweak this as see fit
 
 function setup() {
+  pixelDensity(1);
 
   createCanvas(windowWidth,windowHeight);
   background(0);
   angleMode(DEGREES);
-  d = pixelDensity();
-
-  pg = createGraphics(windowWidth,windowHeight);
-  pg.angleMode(DEGREES);
   
   for (let i=0; i<num; i++){
     molds[i] = new Mold();
   }
-
-  console.log("Sensor angle:" + molds[0].sensorAngle)
-  console.log("Sensor distance: "+ molds[0].sensorDist);
 }
 
 function draw() { 
     background(0,5);
 
-
-    pg.clear();//clear each frame so molds dont read em
-    pg.fill(255,205,240,200);
-    pg.strokeWeight(3*d);
-    pg.stroke(0);
-    strokeCap(ROUND);
-
-    pg.textSize(10*d);
-    
-    pg.textStyle(NORMAL);
-
-    pg.textAlign(LEFT);
-    pg.text("Sensor angle: "+ molds[0].sensorAngle, 50, height-10*d);
-    
-    pg.textAlign(CENTER);
-    pg.text("Sensor distance: "+ molds[0].sensorDist, width/2, height-10*d);
-    
-    pg.textAlign(RIGHT);
-    pg.text("Moldling size: "+ molds[0].r, width-50, height-10*d);
-
-
     loadPixels();
-
 
     for (let i=0; i<num; i++){
       molds[i].update();
       molds[i].display();
     }
+    
+    fill(255,205,240,200);
+    strokeWeight(3);
+    stroke(0);
 
-    image(pg,0,0); //composite the text image buffer on top
+    textSize(10);
+    
+    textStyle(NORMAL);
+
+    textAlign(LEFT);
+    text("Sensor angle: "+ molds[0].sensorAngle, 50, height-10);
+    
+    textAlign(LEFT);
+    text("Sensor distance: "+ molds[0].sensorDist, 50, height-30);
 
 }
 
@@ -77,5 +59,4 @@ function mouseDragged() {
 
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
-  pg.resizeCanvas(windowWidth, windowHeight);
 }
