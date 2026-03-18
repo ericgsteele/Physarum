@@ -93,6 +93,12 @@ class Mold{
             
             index = 4*(d*floor(this.cSensorPos.y)) * (d*width) + 4*(d*floor(this.cSensorPos.x));
             cPx = pixels[index];
+            
+            //threshold to fix mobile clustering - tweak higher or lower
+            let threshold = 15;
+                rPx = rPx < threshold ? 0 : rPx;
+                lPx = lPx < threshold ? 0 : lPx;
+                cPx = cPx < threshold ? 0 : cPx;
 
             if (cPx > lPx && cPx > rPx){
                 this.heading += 0;
