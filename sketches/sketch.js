@@ -18,7 +18,7 @@ function setup() {
   angleMode(DEGREES);
 
   let isMobile = /Mobi|Android/i.test(navigator.userAgent);
-  num = isMobile ? 1000 : 2500; // number of moldlings - first value for mobile, second value for desktop
+  num = isMobile ? 2500 : 4500; // number of moldlings - first value for mobile, second value for desktop
 
   for (let i = 0; i < num; i++) {
     molds[i] = new Mold();
@@ -26,7 +26,8 @@ function setup() {
 }
 
 function draw() { 
-    background(0,5);
+
+  background(0, 8); // normal fade every frame
 
     fadeIn = min(fadeIn + fadeInSpeed, 255);
 
