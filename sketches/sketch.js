@@ -1,14 +1,18 @@
 /// <reference types="p5/global" />
+let d;
+let displayScale;
 
+let fadeIn = 0;        // current opacity, starts at 0
+let fadeInSpeed = 2; // tweak — smaller is a slower fade in
 
 let molds = [];
-let num = 3500; //number of moldlings
+let num = 2500; //number of moldlings
 
 let startleFalloff = 5; // tweak this as see fit
 
 function setup() {
-  pixelDensity(1);
-
+  d = pixelDensity();
+  displayScale = max(d, 2);
   createCanvas(windowWidth,windowHeight);
   background(0);
   angleMode(DEGREES);
@@ -21,6 +25,8 @@ function setup() {
 function draw() { 
     background(0,5);
 
+    fadeIn = min(fadeIn + fadeInSpeed, 255);
+
     loadPixels();
 
     for (let i=0; i<num; i++){
@@ -32,15 +38,18 @@ function draw() {
     strokeWeight(3);
     stroke(0);
 
-    textSize(10);
+    textSize(10*displayScale);
     
     textStyle(NORMAL);
 
     textAlign(LEFT);
-    text("Sensor angle: "+ molds[0].sensorAngle, 50, height-10);
+    text("Sensor angle: "+ molds[0].sensorAngle, 50, height-15*displayScale);
     
     textAlign(LEFT);
-    text("Sensor distance: "+ molds[0].sensorDist, 50, height-30);
+    text("Sensor distance: "+ molds[0].sensorDist, 50, height-30*displayScale);
+
+    
+
 
 }
 

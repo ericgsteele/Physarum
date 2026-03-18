@@ -2,7 +2,7 @@ class Mold{
     constructor(){
         this.x = random(width);
         this.y = random(height);
-        this.r = 1; //moldling size
+        this.r = displayScale; // moldling size - minimum of 2
 
         this.heading = random(360);
 
@@ -15,8 +15,8 @@ class Mold{
         this.lSensorPos = createVector(0,0);
         this.cSensorPos = createVector(0,0);
         this.rSensorPos = createVector(0,0);
-        this.sensorAngle = floor(random(25,50)); //tweak for more variety
-        this.sensorDist =floor(random(10,50)); //tweak for more variety
+        this.sensorAngle = floor(random(25,90)); //tweak for more variety
+        this.sensorDist =floor(random(30,120)); //tweak for more variety
 
         this.startled = false;
         this.startleTimer = 0;
@@ -75,6 +75,8 @@ class Mold{
             this.startleSpeed = 1; // reset speed when recovering
           }
         } else {
+
+            this.heading += random(-10, 10); // subtle drift — tweak the range
             //normal behaviour
             this.getSensorPos(this.rSensorPos, this.heading + this.sensorAngle);  //right sensor position (+x, +y)
             this.getSensorPos(this.lSensorPos, this.heading - this.sensorAngle);  //left sensor position (-x, -y)
@@ -83,13 +85,13 @@ class Mold{
             let index, lPx, rPx, cPx; 
             
             //getting pixel info from sensor positions and storing in variables lPx, rPx, cPx
-            index = 4*floor(this.rSensorPos.y) * width + 4*floor(this.rSensorPos.x);
+            index = 4*(d*floor(this.rSensorPos.y)) * (d*width) + 4*(d*floor(this.rSensorPos.x));
             rPx = pixels[index];
-
-            index = 4*floor(this.lSensorPos.y) * width + 4*floor(this.lSensorPos.x);
+            
+            index = 4*(d*floor(this.lSensorPos.y)) * (d*width) + 4*(d*floor(this.lSensorPos.x));
             lPx = pixels[index];
-
-            index = 4*floor(this.cSensorPos.y) * width + 4*floor(this.cSensorPos.x);
+            
+            index = 4*(d*floor(this.cSensorPos.y)) * (d*width) + 4*(d*floor(this.cSensorPos.x));
             cPx = pixels[index];
 
             if (cPx > lPx && cPx > rPx){
@@ -123,9 +125,11 @@ class Mold{
             this.fadeAmount = constrain(this.fadeAmount, 0, 1);
             this.currentColor = lerpColor(this.colNorm, this.colScared, this.fadeAmount);
         }
-    
-        noStroke();
-        fill(this.currentColor);
+        
+            // Apply global fade-in to whatever color is current
+            let a = min(alpha(this.currentColor), fadeIn);
+            noStroke();
+            fill(red(this.currentColor), green(this.currentColor), blue(this.currentColor), a);
         circle(this.x, this.y, this.r);
     }
 
