@@ -16,7 +16,7 @@ class Mold{
         this.cSensorPos = createVector(0,0);
         this.rSensorPos = createVector(0,0);
         this.sensorAngle = floor(random(25,90)); //tweak for more variety
-        this.sensorDist = floor(random(20, 80)) * displayScale; //tweak for more variety
+        this.sensorDist = floor(random(20, 50)) * displayScale; //tweak for more variety
 
         this.startled = false;
         this.startleTimer = 0;
@@ -69,9 +69,11 @@ class Mold{
 
         this.vx = cos(this.heading);
         this.vy = sin(this.heading);
+
+        let dt = deltaTime / 16.67; // normalize movement
       
         // Use startleSpeed when startled, normal speed otherwise
-        let speed = this.startled ? this.startleSpeed : 1;
+        let speed = (this.startled ? this.startleSpeed : 1) * dt;
         this.x = (this.x + this.vx * speed + width) % width;
         this.y = (this.y + this.vy * speed + height) % height;
       
@@ -92,9 +94,16 @@ class Mold{
             
             let lPx, rPx, cPx; 
             
-            rPx = this.getLuminance(this.rSensorPos.x, this.rSensorPos.y);
-            lPx = this.getLuminance(this.lSensorPos.x, this.lSensorPos.y);
-            cPx = this.getLuminance(this.cSensorPos.x, this.cSensorPos.y);
+            this.sampleCooldown = 0; // boost performance by only sampling every other frame
+            
+            if (this.sampleCooldown <= 0) {
+                rPx = this.getLuminance(this.rSensorPos.x, this.rSensorPos.y);
+                lPx = this.getLuminance(this.lSensorPos.x, this.lSensorPos.y);
+                cPx = this.getLuminance(this.cSensorPos.x, this.cSensorPos.y);
+                this.sampleCooldown = 1; // skip next frame
+            } else {
+                this.sampleCooldown--;
+              }   
             
             //threshold to fix mobile clustering - tweak higher or lower
             let threshold = 5;

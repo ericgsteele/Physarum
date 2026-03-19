@@ -31,13 +31,17 @@ function draw() {
 
     fadeIn = min(fadeIn + fadeInSpeed, 255);
 
+    loadPixels();
 
     for (let i=0; i<num; i++){
       molds[i].update();
+    }
+
+    for (let i=0; i<num; i++){
       molds[i].display();
     }
 
-    loadPixels();
+    let fps = floor(frameRate());
 
     fill(255,205,240,200);
     strokeWeight(3);
@@ -47,6 +51,9 @@ function draw() {
     
     textStyle(NORMAL);
 
+    textAlign(LEFT);
+    text("FPS: "+ fps, 50, 45*displayScale);
+    
     textAlign(LEFT);
     text("Moldlings: "+ num, 50, height-45*displayScale);
 
