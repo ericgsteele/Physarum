@@ -27,17 +27,18 @@ function setup() {
 
 function draw() { 
 
-  background(0, 8); // normal fade every frame
+  background(0, 20); // normal fade every frame
 
     fadeIn = min(fadeIn + fadeInSpeed, 255);
 
-    loadPixels();
 
     for (let i=0; i<num; i++){
       molds[i].update();
       molds[i].display();
     }
-    
+
+    loadPixels();
+
     fill(255,205,240,200);
     strokeWeight(3);
     stroke(0);

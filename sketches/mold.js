@@ -16,7 +16,7 @@ class Mold{
         this.cSensorPos = createVector(0,0);
         this.rSensorPos = createVector(0,0);
         this.sensorAngle = floor(random(25,90)); //tweak for more variety
-        this.sensorDist = floor(random(0.03, 0.08) * min(width, height)); //tweak for more variety
+        this.sensorDist = floor(random(20, 80)) * displayScale; //tweak for more variety
 
         this.startled = false;
         this.startleTimer = 0;
@@ -57,6 +57,14 @@ class Mold{
         this.startleSpeed = lerp(1, 2, proximity);
     }
 
+    getLuminance(x, y) {
+        let index = 4*(d*floor(y)) * (d*width) + 4*(d*floor(x));
+        let r = pixels[index];
+        let g = pixels[index + 1];
+        let b = pixels[index + 2];
+        return (r + g + b) / 3;
+      }
+
     update(){
 
         this.vx = cos(this.heading);
@@ -82,20 +90,14 @@ class Mold{
             this.getSensorPos(this.lSensorPos, this.heading - this.sensorAngle);  //left sensor position (-x, -y)
             this.getSensorPos(this.cSensorPos, this.heading);  //center sensor position (+0, +0)
             
-            let index, lPx, rPx, cPx; 
+            let lPx, rPx, cPx; 
             
-            //getting pixel info from sensor positions and storing in variables lPx, rPx, cPx
-            index = 4*(d*floor(this.rSensorPos.y)) * (d*width) + 4*(d*floor(this.rSensorPos.x));
-            rPx = pixels[index];
-            
-            index = 4*(d*floor(this.lSensorPos.y)) * (d*width) + 4*(d*floor(this.lSensorPos.x));
-            lPx = pixels[index];
-            
-            index = 4*(d*floor(this.cSensorPos.y)) * (d*width) + 4*(d*floor(this.cSensorPos.x));
-            cPx = pixels[index];
+            rPx = this.getLuminance(this.rSensorPos.x, this.rSensorPos.y);
+            lPx = this.getLuminance(this.lSensorPos.x, this.lSensorPos.y);
+            cPx = this.getLuminance(this.cSensorPos.x, this.cSensorPos.y);
             
             //threshold to fix mobile clustering - tweak higher or lower
-            let threshold = 15;
+            let threshold = 5;
                 rPx = rPx < threshold ? 0 : rPx;
                 lPx = lPx < threshold ? 0 : lPx;
                 cPx = cPx < threshold ? 0 : cPx;
